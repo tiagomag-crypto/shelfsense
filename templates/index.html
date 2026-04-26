@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShelfSense Dashboard</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0b1220, #111827, #1f2937);
+            color: white;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1300px;
+            margin: 25px auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 22px;
+            padding: 24px;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.25);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .logo {
+            width: 110px;
+            height: 110px;
+            object-fit: contain;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.04);
+            padding: 10px;
+}
+
+        .brand h1 {
+            margin: 0;
+            color: #facc15;
+            font-size: 34px;
+        }
+
+        .brand p {
+            margin: 8px 0 0 0;
+            color: #cbd5e1;
+        }
+
+        .badge {
+            padding: 14px 20px;
+            border-radius: 14px;
+            font-weight: bold;
+        }
+
+        .badge.ok {
+            background: rgba(34, 197, 94, 0.18);
+            color: #86efac;
+            border: 1px solid rgba(34, 197, 94, 0.35);
+        }
+
+        .badge.alert {
+            background: rgba(239, 68, 68, 0.18);
+            color: #fecaca;
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            animation: piscarVermelho 1s infinite;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 22px;
+            padding: 24px;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.22);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            font-size: 24px;
+            margin-bottom: 18px;
+        }
+
+        .big-number {
+            font-size: 72px;
+            font-weight: bold;
+            color: #facc15;
+            margin: 0;
+        }
+
+        .sub {
+            color: #cbd5e1;
+            margin-top: 8px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 24px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 999px;
+            overflow: hidden;
+            margin-top: 22px;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #22c55e, #15803d);
+}
+        .products {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-top: 22px;
+        }
+
+        .product-box {
+            padding: 18px;
+            border-radius: 18px;
+            text-align: center;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: 0.3s ease;
+        }
+
+        .product-box.active {
+    background: rgba(34, 197, 94, 0.20) !important;
+    border: 1px solid rgba(34, 197, 94, 0.50) !important;
+    color: #86efac !important;
+}
+
+        .product-box.empty {
+            background: rgba(239, 68, 68, 0.14);
+            border: 1px solid rgba(239, 68, 68, 0.28);
+            color: #fecaca;
+        }
+
+        .product-box h3 {
+            margin: 0 0 8px 0;
+        }
+
+        .product-box p {
+            margin: 0;
+            color: #cbd5e1;
+        }
+
+        .alert-panel {
+            margin-top: 24px;
+            display: none;
+            animation: slideIn 0.5s ease;
+            background: linear-gradient(135deg, #b91c1c, #ef4444);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 12px 34px rgba(0,0,0,0.28);
+        }
+
+        .alert-panel.show {
+            display: block;
+            animation: slideIn 0.5s ease, piscarVermelho 1s infinite;
+        }
+
+        .alert-panel h2 {
+            margin: 0 0 10px 0;
+            font-size: 30px;
+        }
+
+        .alert-panel p {
+            margin: 8px 0;
+            font-size: 17px;
+        }
+
+        .resolve-btn {
+            margin-top: 16px;
+            background: white;
+            color: #b91c1c;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 18px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .resolve-btn:hover {
+            transform: scale(1.03);
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .history-item {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 16px;
+        }
+
+        .history-item strong {
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .history-meta {
+            color: #cbd5e1;
+            font-size: 14px;
+        }
+
+        .resolved {
+            color: #86efac;
+            font-weight: bold;
+        }
+
+        .active-status {
+            color: #fecaca;
+            font-weight: bold;
+        }
+
+        .footer-note {
+            margin-top: 20px;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+        .warning-panel {
+    margin-top: 24px;
+    display: none;
+    animation: slideIn 0.5s ease;
+    background: linear-gradient(135deg, #d97706, #f59e0b);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 12px 34px rgba(0,0,0,0.28);
+    color: white;
+}
+
+.warning-panel.show {
+    display: block;
+}
+
+.warning-panel h2 {
+    margin: 0 0 10px 0;
+    font-size: 30px;
+}
+
+.btn-limpar {
+    background: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.btn-limpar:hover {
+    background: #cc0000;
+}
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes piscarVermelho {
+    0% {
+        box-shadow: 0 0 0 rgba(239, 68, 68, 0.0);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(239, 68, 68, 0.9);
+        transform: scale(1.02);
+    }
+    100% {
+        box-shadow: 0 0 0 rgba(239, 68, 68, 0.0);
+        transform: scale(1);
+    }
+}
+
+        @media (max-width: 900px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .products {
+                grid-template-columns: 1fr;
+            }
+
+            .big-number {
+                font-size: 54px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div class="header">
+            <div class="brand">
+                <img src="{{ url_for('static', filename='logo.png') }}" class="logo">
+                <div>
+                    <h1>ShelfSense</h1>
+                    <p>Monitorização inteligente da prateleira em tempo real</p>
+                </div>
+            </div>
+
+            <div id="statusBadge" class="badge ok">✔ Sistema ativo</div>
+        </div>
+
+        <div class="main-grid">
+            <div>
+                <div class="card">
+                    <h2>Quantidade de produtos</h2>
+                    <p id="contador" class="big-number">{{ restantes }} / {{ total }}</p>
+                    <p class="sub">Produtos atualmente disponíveis na prateleira</p>
+
+                    <div class="progress-bar">
+                        <div id="progressFill" class="progress-fill"></div>
+                    </div>
+
+                    <div class="products">
+                        <div id="produto1" class="product-box">
+                            <h3>Sumo Compal 1</h3>
+                            <p></p>
+                        </div>
+                        <div id="produto2" class="product-box">
+                            <h3>Sumo Compal 2</h3>
+                            <p></p>
+                        </div>
+                        <div id="produto3" class="product-box">
+                            <h3>Sumo Compal 3</h3>
+                            <p></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="warningPanel" class="warning-panel">
+    <h2>⚠ Stock a terminar</h2>
+    <p>Os sumos estão a acabar.</p>
+    <p><strong>Data e hora do aviso:</strong> <span id="warningDate">--</span></p>
+</div>
+
+                <div id="alertPanel" class="alert-panel">
+                    <h2>⚠ Produto esgotado</h2>
+                    <p>O último produto foi retirado da prateleira.</p>
+                    <p><strong>Data e hora do alerta:</strong> <span id="alertDate">--</span></p>
+                    <button class="resolve-btn" onclick="resolverAlerta()">Produto reposto</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>
+    Histórico de alertas
+    <button id="btnLimpar" onclick="limparAlertas()" class="btn-limpar" style="display:none;">
+        Limpar
+    </button>
+</h2>
+                <div id="historyList" class="history-list"></div>
+            </div>
+        </div>
+
+        <div class="footer-note">
+            Painel atualizado automaticamente em tempo real.
+        </div>
+    </div>
+    <audio id="alertSound">
+    <source src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg">
+</audio>
+    <script>
+        async function carregarEstado() {
+            const resposta = await fetch("/estado");
+            const data = await resposta.json();
+
+            document.getElementById("contador").textContent = `${data.restantes} / ${data.total}`;
+
+            const percentagem = (data.restantes / data.total) * 100;
+            document.getElementById("progressFill").style.width = `${percentagem}%`;
+
+            atualizarProdutos(data.restantes);
+            atualizarAlerta(data);
+            atualizarHistorico(data.historico_alertas);
+        }
+
+        function atualizarProdutos(restantes) {
+            for (let i = 1; i <= 3; i++) {
+                const box = document.getElementById(`produto${i}`);
+                const texto = box.querySelector("p");
+
+                if (i <= restantes) {
+                    box.className = "product-box active";
+                    texto.textContent = "Disponível";
+                } else {
+                    box.className = "product-box empty";
+                    texto.textContent = "Retirado";
+                }
+            }
+        }
+
+        function atualizarAlerta(data) {
+    const painelAlerta = document.getElementById("alertPanel");
+    const painelAviso = document.getElementById("warningPanel");
+    const badge = document.getElementById("statusBadge");
+    const alertDate = document.getElementById("alertDate");
+    const warningDate = document.getElementById("warningDate");
+    const som = document.getElementById("alertSound");
+
+    if (data.alerta_ativo) {
+        painelAlerta.classList.add("show");
+        painelAviso.classList.remove("show");
+
+        badge.className = "badge alert";
+        badge.textContent = "⚠ Alerta ativo";
+
+        alertDate.textContent = data.data_alerta || "--";
+        som.play();
+    } else if (data.aviso_ativo) {
+        painelAviso.classList.add("show");
+        painelAlerta.classList.remove("show");
+
+        badge.className = "badge alert";
+        badge.textContent = "⚠ Stock a terminar";
+
+        warningDate.textContent = data.data_aviso || "--";
+    } else {
+        painelAlerta.classList.remove("show");
+        painelAviso.classList.remove("show");
+
+        badge.className = "badge ok";
+        badge.textContent = "✔ Sistema ativo";
+    }
+}
+
+        function atualizarHistorico(historico) {
+    const historyList = document.getElementById("historyList");
+    const btnLimpar = document.getElementById("btnLimpar");
+
+    if (!historico || historico.length === 0) {
+        historyList.innerHTML = `
+            <div class="history-item">
+                <strong>Sem alertas registados</strong>
+                <div class="history-meta">
+                    Ainda não foi gerado nenhum alerta.
+                </div>
+            </div>
+        `;
+
+        btnLimpar.style.display = "none";
+        return;
+    }
+
+    btnLimpar.style.display = "inline-block";
+
+    historyList.innerHTML = historico.map(item => `
+        <div class="history-item">
+            <strong>${item.mensagem}</strong>
+            <div class="history-meta">Data e hora: ${item.data}</div>
+            <div class="history-meta">
+                Estado:
+                <span class="${
+                    item.estado === 'Resolvido'
+                        ? 'resolved'
+                        : 'active-status'
+                }">
+                    ${item.estado}
+                </span>
+            </div>
+        </div>
+    `).join("");
+}
+
+        async function resolverAlerta() {
+            await fetch("/reposto", {
+                method: "POST"
+            });
+            carregarEstado();
+        }
+
+        carregarEstado();
+        setInterval(carregarEstado, 2000);
+
+       function limparAlertas() {
+
+    const confirmar = confirm("Tem a certeza que deseja limpar o histórico de alertas?");
+
+    if (!confirmar) {
+        return;
+    }
+
+    fetch("/limpar_alertas", {
+        method: "POST"
+    }).then(() => {
+        atualizarHistorico([]);
+    });
+}
+    </script>
+</body>
+</html>
